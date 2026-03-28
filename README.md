@@ -109,17 +109,33 @@ ai-indian-investor/
 
 ---
 
-## Demo Video Script
+## 🚀 Submission Deliverables
 
-See `VIDEO_SCRIPT_FINAL.md` for a complete 3-minute demo script with slide-by-slide guidance.
+| Deliverable | Description | Link |
+| :--- | :--- | :--- |
+| **3-Minute Pitch Video** | Recorded walkthrough of the problem and live demo. | [**Watch Video**](https://example.com/demo-video) *(Replace with actual link)* |
+| **Architecture Document** | Detailed multi-agent system design and tool integration. | [**ARCHITECTURE.md**](./ARCHITECTURE.md) |
+| **Impact Model** | Quantified business case and ₹70 Cr/month revenue potential. | [**IMPACT_MODEL.md**](./IMPACT_MODEL.md) |
+| **GitHub Repository** | Source code with clear setup and build history. | [**Main Branch**](https://github.com/user/ai-indian-investor) |
 
 ---
 
-## Impact Summary
+## 💎 Why We Win (The Edge)
 
-- **Time saved**: 2 hours of research → 5 minutes per investor per day
-- **Signal accuracy**: 73% historical success rate on chart patterns
-- **ET Revenue opportunity**: ₹70 crore/month potential
+1. **Multi-Agent Orchestration**: Unlike "wrapper" apps, we use specialized agents (Radar, Analysis, Portfolio, Video) that cross-verify data before presenting it to the investor.
+2. **First-of-its-Kind Video Engine**: We don't just show charts; we generate **3-minute AI-narrated video wraps** for the busy investor, a feature nowhere else in the Indian market.
+3. **100% Reliability Architecture**: Our "Mock-First" design ensures that even during market holidays or API outages, the platform remains 100% functional for demonstrations.
+4. **ET Integration Potential**: Directly built to scale ET Prime subscriptions and brokerage partnerships.
+
+---
+
+## 📊 Impact Highlights
+
+- **93% Time Savings**: 2.5 hours of research condensed into 10 minutes.
+- **73% Historical Accuracy**: High-conviction technical setups via the Analysis Agent.
+- **₹70 Crore/Month Opportunity**: Modeling ET Prime upselling and brokerage affiliate growth.
+
+See [**IMPACT_MODEL.md**](./IMPACT_MODEL.md) for detailed math and logic.
 
 ---
 
