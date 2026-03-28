@@ -113,7 +113,6 @@ ai-indian-investor/
 
 | Deliverable | Description | Link |
 | :--- | :--- | :--- |
-| **3-Minute Pitch Video** | Recorded walkthrough of the problem and live demo. | [**Watch Video**](https://example.com/demo-video) *(Replace with actual link)* |
 | **Architecture Document** | Detailed multi-agent system design and tool integration. | [**ARCHITECTURE.md**](./ARCHITECTURE.md) |
 | **Impact Model** | Quantified business case and ₹70 Cr/month revenue potential. | [**IMPACT_MODEL.md**](./IMPACT_MODEL.md) |
 | **GitHub Repository** | Source code with clear setup and build history. | [**Main Branch**](https://github.com/user/ai-indian-investor) |
