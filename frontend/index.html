@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Indian Investor | ET Hackathon 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); }
+        .card-gradient { background: linear-gradient(145deg, rgba(30,41,59,0.8), rgba(15,23,42,0.9)); }
+        .glow-green { box-shadow: 0 0 20px rgba(34,197,94,0.3); }
+        .glow-red { box-shadow: 0 0 20px rgba(239,68,68,0.3); }
+        .glow-blue { box-shadow: 0 0 20px rgba(59,130,246,0.3); }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        .slide-up { animation: slideUp 0.5s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        .typewriter { overflow: hidden; border-right: 2px solid #3b82f6; animation: blink 0.7s step-end infinite; }
+        @keyframes blink { from, to { border-color: transparent } 50% { border-color: #3b82f6 } }
+        .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); animation: shimmer 1.5s infinite; }
+        @keyframes shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        .alert-card { transition: all 0.3s ease; }
+        .alert-card:hover { transform: translateY(-2px); }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- Header -->
+    <header class="border-b border-slate-700/50 backdrop-blur-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center font-bold text-lg">ET</div>
+                <div>
+                    <h1 class="text-xl font-bold">AI Indian Investor</h1>
+                    <p class="text-xs text-slate-400">Powered by ET Markets Intelligence</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div id="marketStatus" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-800/50 text-sm">
+                    <span class="w-2 h-2 rounded-full bg-green-500 pulse"></span>
+                    <span>Market Open</span>
+                </div>
+                <div id="dataSource" class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-purple-500/20 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-purple-400"></span>
+                    <span>Demo Data</span>
+                </div>
+                <button onclick="refreshAll()" class="p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700/50 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Market Summary -->
+        <section class="mb-8">
+            <h2 class="text-2xl font-bold mb-4">Market Overview</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Nifty -->
+                <div class="card-gradient rounded-2xl p-5 border border-slate-700/50">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-slate-400 text-sm">Nifty 50</span>
+                        <span id="niftyChange" class="text-xs px-2 py-1 rounded-full bg-green-500/20 text-green-400">+1.21%</span>
+                    </div>
+                    <div id="niftyValue" class="text-3xl font-bold mb-1">22,450.25</div>
+                    <div id="niftyPoints" class="text-slate-400 text-sm">+268.30 pts</div>
+                </div>
+                <!-- Bank Nifty -->
+                <div class="card-gradient rounded-2xl p-5 border border-slate-700/50">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-slate-400 text-sm">Bank Nifty</span>
+                        <span id="bnfChange" class="text-xs px-2 py-1 rounded-full bg-red-500/20 text-red-400">-0.45%</span>
+                    </div>
+                    <div id="bnfValue" class="text-3xl font-bold mb-1">48,500.80</div>
+                    <div id="bnfPoints" class="text-slate-400 text-sm">-219.45 pts</div>
+                </div>
+                <!-- FII/DII -->
+                <div class="card-gradient rounded-2xl p-5 border border-slate-700/50">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-slate-400 text-sm">FII/DII Flow</span>
+                    </div>
+                    <div class="flex gap-4">
+                        <div>
+                            <span class="text-green-400 font-semibold">FII</span>
+                            <div id="fiiValue" class="font-bold">+₹1,250 Cr</div>
+                        </div>
+                        <div>
+                            <span class="text-red-400 font-semibold">DII</span>
+                            <div id="diiValue" class="font-bold">-₹890 Cr</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- AI Signals -->
+                <div class="card-gradient rounded-2xl p-5 border border-blue-500/30 glow-blue">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-slate-400 text-sm">AI Signal</span>
+                        <span class="text-xs px-2 py-1 rounded-full bg-blue-500/20 text-blue-400">BULLISH</span>
+                    </div>
+                    <div class="text-2xl font-bold text-blue-400">OPPORTUNITY</div>
+                    <div class="text-slate-400 text-sm">8 alerts detected</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab Navigation -->
+        <div class="flex gap-2 mb-6 border-b border-slate-700/50 pb-4">
+            <button onclick="switchTab('radar')" id="tab-radar" class="tab-btn px-5 py-2.5 rounded-lg font-medium transition bg-blue-600 text-white">Opportunity Radar</button>
+            <button onclick="switchTab('charts')" id="tab-charts" class="tab-btn px-5 py-2.5 rounded-lg font-medium transition bg-slate-800/50 text-slate-300 hover:bg-slate-700/50">Chart Analysis</button>
+            <button onclick="switchTab('chat')" id="tab-chat" class="tab-btn px-5 py-2.5 rounded-lg font-medium transition bg-slate-800/50 text-slate-300 hover:bg-slate-700/50">Market ChatGPT</button>
+            <button onclick="switchTab('video')" id="tab-video" class="tab-btn px-5 py-2.5 rounded-lg font-medium transition bg-slate-800/50 text-slate-300 hover:bg-slate-700/50">AI Video Engine</button>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="tabContent">
+            <!-- Opportunity Radar Tab -->
+            <section id="radar-tab" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Alerts List -->
+                    <div class="lg:col-span-2 space-y-4" id="alertsContainer">
+                        <!-- Alerts will be loaded here -->
+                    </div>
+                    <!-- Top Picks -->
+                    <div class="card-gradient rounded-2xl p-6 border border-slate-700/50">
+                        <h3 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <span class="w-3 h-3 rounded-full bg-yellow-500"></span>
+                            AI Top Picks
+                        </h3>
+                        <div id="topPicks" class="space-y-3">
+                            <!-- Top picks will be loaded here -->
+                        </div>
+                        <div class="mt-6 pt-4 border-t border-slate-700/50">
+                            <h4 class="text-sm text-slate-400 mb-3">Sector Distribution</h4>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-sm"><span>Metals</span><span class="text-yellow-500">40%</span></div>
+                                <div class="w-full h-2 bg-slate-700 rounded-full"><div class="h-full bg-yellow-500 rounded-full" style="width:40%"></div></div>
+                                <div class="flex justify-between text-sm"><span>Banking</span><span class="text-blue-500">30%</span></div>
+                                <div class="w-full h-2 bg-slate-700 rounded-full"><div class="h-full bg-blue-500 rounded-full" style="width:30%"></div></div>
+                                <div class="flex justify-between text-sm"><span>IT</span><span class="text-green-500">20%</span></div>
+                                <div class="w-full h-2 bg-slate-700 rounded-full"><div class="h-full bg-green-500 rounded-full" style="width:20%"></div></div>
+                                <div class="flex justify-between text-sm"><span>Others</span><span class="text-purple-500">10%</span></div>
+                                <div class="w-full h-2 bg-slate-700 rounded-full"><div class="h-full bg-purple-500 rounded-full" style="width:10%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart Analysis Tab -->
+            <section id="charts-tab" class="tab-content hidden">
+                <div class="flex flex-col lg:flex-row gap-6">
+                    <!-- Left Panel - Stock Info -->
+                    <div class="w-full lg:w-80 flex-shrink-0 space-y-4">
+                        <div class="card-gradient rounded-2xl p-5 border border-slate-700/50">
+                            <label class="text-sm text-slate-400 mb-2 block">Stock Symbol</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="stockSymbol" value="RELIANCE" class="flex-1 bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2 text-white uppercase focus:outline-none focus:border-blue-500">
+                                <button onclick="analyzeStock()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-medium transition whitespace-nowrap">Analyze</button>
+                            </div>
+                        </div>
+                        <div id="stockInfo" class="card-gradient rounded-2xl p-5 border border-slate-700/50">
+                            <div class="text-center text-slate-400">Enter a symbol to analyze</div>
+                        </div>
+                        <div id="patternResults" class="card-gradient rounded-2xl p-5 border border-green-500/30 hidden">
+                            <!-- Pattern results will be shown here -->
+                        </div>
+                    </div>
+                    <!-- Right Panel - Chart -->
+                    <div class="flex-1">
+                        <div class="card-gradient rounded-2xl p-4 border border-slate-700/50 h-full min-h-[500px]">
+                            <div id="chartContainer" class="w-full h-full min-h-[460px]"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ChatGPT Tab -->
+            <section id="chat-tab" class="tab-content hidden">
+                <div class="max-w-4xl mx-auto">
+                    <div class="card-gradient rounded-2xl border border-slate-700/50 overflow-hidden">
+                        <div class="p-4 border-b border-slate-700/50 bg-slate-800/30">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold">Market ChatGPT</h3>
+                                    <p class="text-xs text-slate-400">Ask anything about Indian stocks</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="chatMessages" class="h-[400px] overflow-y-auto p-4 space-y-4 scrollbar-hide">
+                            <div class="flex gap-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">AI</div>
+                                <div class="bg-slate-800/50 rounded-2xl rounded-tl-none p-4 max-w-[80%]">
+                                    <p class="text-slate-200">Namaste! I'm your AI investment advisor. Ask me about:</p>
+                                    <ul class="mt-2 text-sm text-slate-400 space-y-1">
+                                        <li>• Stock recommendations</li>
+                                        <li>• Market analysis</li>
+                                        <li>• Technical patterns</li>
+                                        <li>• FII/DII flows</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 border-t border-slate-700/50">
+                            <div class="flex gap-2">
+                                <input type="text" id="chatInput" placeholder="Ask about stocks, market trends..." class="flex-1 bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-blue-500" onkeypress="if(event.key==='Enter')sendMessage()">
+                                <button onclick="sendMessage()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-xl font-medium transition flex items-center gap-2">
+                                    <span>Send</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Video Engine Tab -->
+            <section id="video-tab" class="tab-content hidden">
+                <div class="max-w-4xl mx-auto">
+                    <div class="card-gradient rounded-2xl p-6 border border-slate-700/50 mb-6">
+                        <h3 class="text-lg font-bold mb-4">AI Market Video Generator</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div>
+                                <label class="text-sm text-slate-400 mb-2 block">Video Type</label>
+                                <select id="videoType" class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500">
+                                    <option value="market_wrap">Daily Market Wrap</option>
+                                    <option value="sector_rotation">Sector Rotation</option>
+                                    <option value="fiidii">FII/DII Flow Analysis</option>
+                                    <option value="earnings">Earnings Preview</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="text-sm text-slate-400 mb-2 block">Duration</label>
+                                <select id="videoDuration" class="w-full bg-slate-800/50 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500">
+                                    <option value="30">30 seconds</option>
+                                    <option value="60" selected>60 seconds</option>
+                                    <option value="90">90 seconds</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="generateVideo()" id="generateBtn" class="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-lg font-medium transition flex items-center justify-center gap-2">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                                    <span>Generate Video</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="videoStatus" class="hidden p-4 rounded-xl bg-slate-800/50 border border-blue-500/30">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                                <div>
+                                    <p id="statusText" class="font-medium">Generating your video...</p>
+                                    <p class="text-xs text-slate-400">This may take 30-45 seconds</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-gradient rounded-2xl border border-slate-700/50 overflow-hidden">
+                        <div class="aspect-video bg-slate-900 flex items-center justify-center" id="videoPlayer">
+                            <div class="text-center">
+                                <svg class="w-16 h-16 mx-auto text-slate-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <p class="text-slate-400">Click "Generate Video" to create your market wrap</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-700/50 mt-12 py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>ET AI Hackathon 2026 | AI for the Indian Investor | Powered by Economic Times</p>
+            <p class="mt-1">Built with LangChain + Groq + FastAPI</p>
+        </div>
+    </footer>
+
+    <script>
+        // API Configuration
+        const API_BASE = 'http://localhost:8000/api';
+        
+        // State
+        let currentTab = 'radar';
+        let chart = null;
+        let candleSeries = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMarketData();
+            loadRadarData();
+            initChart();
+        });
+
+        // Tab Switching
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('bg-blue-600', 'text-white');
+                el.classList.add('bg-slate-800/50', 'text-slate-300');
+            });
+            document.getElementById(`${tab}-tab`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.remove('bg-slate-800/50', 'text-slate-300');
+            document.getElementById(`tab-${tab}`).classList.add('bg-blue-600', 'text-white');
+            
+            // Resize chart when switching to charts tab
+            if (tab === 'charts' && chart) {
+                setTimeout(() => {
+                    const container = document.getElementById('chartContainer');
+                    if (container) {
+                        chart.applyOptions({ 
+                            width: container.clientWidth, 
+                            height: container.clientHeight 
+                        });
+                    }
+                }, 100);
+            }
+        }
+
+        // Update data source indicator
+        function updateDataSource(source, feature) {
+            const el = document.getElementById('dataSource');
+            if (!el) return;
+            
+            if (source === 'yfinance' || source === 'NSE Live' || source === 'NSE Live Data') {
+                el.innerHTML = '<span class="w-2 h-2 rounded-full bg-green-400"></span><span>Live Data</span>';
+                el.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full bg-green-500/20 text-xs';
+            } else if (source === 'demo') {
+                el.innerHTML = '<span class="w-2 h-2 rounded-full bg-yellow-400"></span><span>Demo Data</span>';
+                el.className = 'flex items-center gap-2 px-3 py-1.5 rounded-full bg-yellow-500/20 text-xs';
+            }
+        }
+
+        // Load Market Data
+        async function loadMarketData() {
+            try {
+                const res = await fetch(`${API_BASE}/market-summary`);
+                const data = await res.json();
+                updateMarketSummary(data);
+                updateDataSource(data.data_source || 'demo', 'market');
+            } catch (e) {
+                console.log('Using mock market data');
+                updateMarketSummary(getMockMarketData());
+                updateDataSource('demo', 'market');
+            }
+        }
+
+        function updateMarketSummary(data) {
+            const nifty = data.indices.nifty;
+            const bnf = data.indices.banknifty;
+            
+            document.getElementById('niftyValue').textContent = nifty.value.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            document.getElementById('niftyPoints').textContent = `${nifty.change >= 0 ? '+' : ''}${nifty.change.toFixed(2)} pts`;
+            document.getElementById('niftyChange').textContent = `${nifty.change_pct >= 0 ? '+' : ''}${nifty.change_pct.toFixed(2)}%`;
+            document.getElementById('niftyChange').className = `text-xs px-2 py-1 rounded-full ${nifty.change_pct >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`;
+            
+            document.getElementById('bnfValue').textContent = bnf.value.toLocaleString('en-IN', {minimumFractionDigits: 2});
+            document.getElementById('bnfPoints').textContent = `${bnf.change >= 0 ? '+' : ''}${bnf.change.toFixed(2)} pts`;
+            document.getElementById('bnfChange').textContent = `${bnf.change_pct >= 0 ? '+' : ''}${bnf.change_pct.toFixed(2)}%`;
+            document.getElementById('bnfChange').className = `text-xs px-2 py-1 rounded-full ${bnf.change_pct >= 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`;
+            
+            document.getElementById('fiiValue').textContent = `+₹${data.fiidii.fii_net.toFixed(0)} Cr`;
+            document.getElementById('diiValue').textContent = `-₹${Math.abs(data.fiidii.dii_net).toFixed(0)} Cr`;
+        }
+
+        // Load Radar Data
+        async function loadRadarData() {
+            try {
+                const res = await fetch(`${API_BASE}/radar`);
+                const data = await res.json();
+                renderAlerts(data.alerts);
+                renderTopPicks(data.top_picks);
+                if (data.alerts && data.alerts.length > 0 && data.alerts[0].source) {
+                    updateDataSource(data.alerts[0].source, 'radar');
+                }
+            } catch (e) {
+                console.log('Using mock radar data');
+                renderAlerts(getMockAlerts());
+                renderTopPicks(['TATASTEEL', 'HDFCBANK', 'RELIANCE']);
+                updateDataSource('demo', 'radar');
+            }
+        }
+
+        function renderAlerts(alerts) {
+            const container = document.getElementById('alertsContainer');
+            container.innerHTML = alerts.map(alert => `
+                <div class="alert-card card-gradient rounded-2xl p-5 border ${getAlertBorder(alert.signal_strength)} slide-up">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl ${getAlertBg(alert.type)} flex items-center justify-center font-bold text-lg">
+                                ${alert.symbol.substring(0, 2)}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-lg">${alert.symbol}</h4>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs px-2 py-0.5 rounded-full ${getSignalBadge(alert.signal_strength)}">${alert.signal_strength}</span>
+                                    ${alert.source && alert.source !== 'demo' ? `<span class="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-400">LIVE</span>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <span class="text-xs text-slate-400 uppercase">${alert.type.replace('_', ' ')}</span>
+                    </div>
+                    <p class="text-slate-300 text-sm mb-3">${alert.description}</p>
+                    <div class="flex items-center justify-between text-sm">
+                        <div>
+                            <span class="text-slate-400">Price:</span>
+                            <span class="font-semibold ml-1">₹${alert.price || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400">Target:</span>
+                            <span class="text-green-400 font-semibold ml-1">₹${alert.target || 'N/A'}</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400">Stop:</span>
+                            <span class="text-red-400 font-semibold ml-1">₹${alert.stop_loss || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-slate-700/50">
+                        <div class="flex items-start gap-2">
+                            <svg class="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <p class="text-sm text-slate-400">${alert.insight}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTopPicks(picks) {
+            const container = document.getElementById('topPicks');
+            container.innerHTML = picks.map((symbol, i) => `
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-slate-800/30 hover:bg-slate-800/50 transition cursor-pointer" onclick="selectStock('${symbol}')">
+                    <div class="w-8 h-8 rounded-full bg-gradient-to-br ${i === 0 ? 'from-yellow-400 to-orange-500' : i === 1 ? 'from-blue-400 to-blue-600' : 'from-green-400 to-green-600'} flex items-center justify-center text-xs font-bold">
+                        ${i + 1}
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold">${symbol}</p>
+                        <p class="text-xs text-slate-400">${getPickReason(symbol)}</p>
+                    </div>
+                    <svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                </div>
+            `).join('');
+        }
+
+        function getPickReason(symbol) {
+            const reasons = {
+                'TATASTEEL': 'Strong institutional buying',
+                'HDFCBANK': 'Promoter conviction high',
+                'RELIANCE': 'Accumulation phase',
+                'JSWSTEEL': 'Steel sector momentum',
+                'INFY': 'CFO purchase signal'
+            };
+            return reasons[symbol] || 'AI selected';
+        }
+
+        function getAlertBorder(strength) {
+            return {
+                'STRONG': 'border-green-500/30',
+                'MODERATE': 'border-yellow-500/30',
+                'CAUTION': 'border-red-500/30'
+            }[strength] || 'border-slate-700/50';
+        }
+
+        function getAlertBg(type) {
+            return {
+                'bulk_deal': 'bg-purple-500/20 text-purple-400',
+                'insider_trading': 'bg-blue-500/20 text-blue-400',
+                'volume_spike': 'bg-yellow-500/20 text-yellow-400',
+                'breakout': 'bg-green-500/20 text-green-400'
+            }[type] || 'bg-slate-500/20 text-slate-400';
+        }
+
+        function getSignalBadge(strength) {
+            return {
+                'STRONG': 'bg-green-500/20 text-green-400',
+                'MODERATE': 'bg-yellow-500/20 text-yellow-400',
+                'CAUTION': 'bg-red-500/20 text-red-400'
+            }[strength] || 'bg-slate-500/20 text-slate-400';
+        }
+
+        // Chart Functions
+        function initChart() {
+            const container = document.getElementById('chartContainer');
+            if (!container) return;
+            
+            const resizeChart = () => {
+                if (chart) chart.remove();
+                chart = LightweightCharts.createChart(container, {
+                    width: container.clientWidth || 800,
+                    height: container.clientHeight || 460,
+                    layout: {
+                        background: { type: 'solid', color: 'transparent' },
+                        textColor: '#94a3b8',
+                    },
+                    grid: {
+                        vertLines: { color: 'rgba(148, 163, 184, 0.1)' },
+                        horzLines: { color: 'rgba(148, 163, 184, 0.1)' },
+                    },
+                    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+                    timeScale: { borderColor: 'rgba(148, 163, 184, 0.2)' },
+                });
+                candleSeries = chart.addCandlestickSeries({
+                    upColor: '#22c55e',
+                    downColor: '#ef4444',
+                    borderDownColor: '#ef4444',
+                    borderUpColor: '#22c55e',
+                    wickDownColor: '#ef4444',
+                    wickUpColor: '#22c55e',
+                });
+                loadChartData('RELIANCE');
+            };
+            
+            resizeChart();
+            window.addEventListener('resize', () => {
+                if (chart && container) {
+                    chart.applyOptions({ width: container.clientWidth, height: container.clientHeight });
+                }
+            });
+            
+            // Re-init when tab becomes visible
+            const observer = new MutationObserver(() => {
+                if (!document.getElementById('charts-tab').classList.contains('hidden')) {
+                    setTimeout(resizeChart, 100);
+                }
+            });
+        }
+
+        async function loadChartData(symbol) {
+            try {
+                const res = await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}.NS?interval=1d&range=3mo`);
+                const data = await res.json();
+                const result = data.chart.result[0];
+                const quotes = result.timestamp.map((t, i) => ({
+                    time: t,
+                    open: result.indicators.quote[0].open[i],
+                    high: result.indicators.quote[0].high[i],
+                    low: result.indicators.quote[0].low[i],
+                    close: result.indicators.quote[0].close[i],
+                })).filter(q => q.close !== null);
+                candleSeries.setData(quotes);
+            } catch (e) {
+                candleSeries.setData(generateMockCandles());
+            }
+        }
+
+        function generateMockCandles() {
+            const data = [];
+            let price = 2800;
+            const now = Math.floor(Date.now() / 1000);
+            for (let i = 90; i >= 0; i--) {
+                const time = now - i * 86400;
+                const change = (Math.random() - 0.5) * 50;
+                const open = price;
+                const close = price + change;
+                const high = Math.max(open, close) + Math.random() * 20;
+                const low = Math.min(open, close) - Math.random() * 20;
+                data.push({ time, open, high, low, close });
+                price = close;
+            }
+            return data;
+        }
+
+        async function analyzeStock() {
+            const symbol = document.getElementById('stockSymbol').value.toUpperCase();
+            if (!symbol) return;
+            
+            loadChartData(symbol);
+            
+            try {
+                const res = await fetch(`${API_BASE}/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ symbol, timeframe: '1D', lookback_days: 90 })
+                });
+                const data = await res.json();
+                showAnalysisResults(data);
+            } catch (e) {
+                showAnalysisResults(getMockAnalysis(symbol));
+            }
+        }
+
+        function showAnalysisResults(data) {
+            document.getElementById('stockInfo').innerHTML = `
+                <div class="text-center mb-4">
+                    <h4 class="text-2xl font-bold">${data.symbol}</h4>
+                    <p class="text-3xl font-bold text-green-400">₹${data.current_price}</p>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-sm">
+                    <div class="p-2 rounded bg-slate-800/50">
+                        <span class="text-slate-400">RSI</span>
+                        <p class="font-semibold">${data.indicators.rsi}</p>
+                    </div>
+                    <div class="p-2 rounded bg-slate-800/50">
+                        <span class="text-slate-400">MACD</span>
+                        <p class="font-semibold capitalize">${data.indicators.macd.replace('_', ' ')}</p>
+                    </div>
+                </div>
+            `;
+            
+            if (data.patterns_detected && data.patterns_detected.length > 0) {
+                const pattern = data.patterns_detected[0];
+                document.getElementById('patternResults').classList.remove('hidden');
+                document.getElementById('patternResults').innerHTML = `
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2 py-1 rounded-full text-xs font-medium ${pattern.direction === 'bullish' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">${pattern.pattern}</span>
+                        <span class="text-lg font-bold ${pattern.direction === 'bullish' ? 'text-green-400' : 'text-red-400'}">${pattern.confidence}%</span>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between"><span class="text-slate-400">Entry</span><span>₹${pattern.entry_point}</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Target</span><span class="text-green-400">₹${pattern.target}</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Stop Loss</span><span class="text-red-400">₹${pattern.stop_loss}</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">Risk/Reward</span><span>${pattern.risk_reward}x</span></div>
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-slate-700/50">
+                        <p class="text-xs text-slate-400">Historical success: ${pattern.historical_success_rate}%</p>
+                    </div>
+                `;
+            }
+        }
+
+        function selectStock(symbol) {
+            document.getElementById('stockSymbol').value = symbol;
+            analyzeStock();
+            switchTab('charts');
+        }
+
+        // Chat Functions
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            addChatMessage(message, 'user');
+            input.value = '';
+            
+            addTypingIndicator();
+            
+            try {
+                const res = await fetch(`${API_BASE}/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message, portfolio: ['RELIANCE', 'INFY'], risk_profile: 'moderate' })
+                });
+                const data = await res.json();
+                removeTypingIndicator();
+                addChatMessage(data.response, 'ai');
+            } catch (e) {
+                removeTypingIndicator();
+                addChatMessage("I'm currently operating with limited connectivity. Please try again in a moment.", 'ai');
+            }
+        }
+
+        function addChatMessage(text, sender) {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.className = 'flex gap-3 slide-up';
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-full ${sender === 'ai' ? 'bg-blue-600' : 'bg-purple-600'} flex items-center justify-center flex-shrink-0">${sender === 'ai' ? 'AI' : 'U'}</div>
+                <div class="bg-slate-800/50 rounded-2xl ${sender === 'ai' ? 'rounded-tl-none' : 'rounded-tr-none'} p-4 max-w-[80%]">
+                    <p class="text-slate-200 whitespace-pre-wrap">${text}</p>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function addTypingIndicator() {
+            const container = document.getElementById('chatMessages');
+            const div = document.createElement('div');
+            div.id = 'typing';
+            div.className = 'flex gap-3';
+            div.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">AI</div>
+                <div class="bg-slate-800/50 rounded-2xl rounded-tl-none p-4">
+                    <div class="flex gap-1">
+                        <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                        <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                        <div class="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typing = document.getElementById('typing');
+            if (typing) typing.remove();
+        }
+
+        // Video Generation
+        async function generateVideo() {
+            const btn = document.getElementById('generateBtn');
+            const status = document.getElementById('videoStatus');
+            btn.disabled = true;
+            btn.innerHTML = '<div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>Generating...</span>';
+            status.classList.remove('hidden');
+            
+            try {
+                const res = await fetch(`${API_BASE}/generate-video`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: document.getElementById('videoType').value,
+                        symbols: ['NIFTY', 'BANKNIFTY'],
+                        duration_seconds: parseInt(document.getElementById('videoDuration').value)
+                    })
+                });
+                const data = await res.json();
+                
+                document.getElementById('statusText').textContent = 'Video generated successfully!';
+                document.getElementById('videoPlayer').innerHTML = `
+                    <div class="text-center">
+                        <svg class="w-20 h-20 mx-auto text-green-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <p class="text-xl font-bold text-green-400">Video Ready!</p>
+                        <p class="text-slate-400 mt-2">Job ID: ${data.job_id}</p>
+                        <p class="text-slate-500 text-sm mt-4">Demo mode - Full video generation requires MoviePy setup</p>
+                    </div>
+                `;
+            } catch (e) {
+                document.getElementById('statusText').textContent = 'Demo mode - Backend not connected';
+            }
+            
+            btn.disabled = false;
+            btn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg><span>Generate Video</span>';
+        }
+
+        // Refresh All
+        function refreshAll() {
+            loadMarketData();
+            loadRadarData();
+        }
+
+        // Mock Data Functions
+        function getMockMarketData() {
+            return {
+                indices: {
+                    nifty: { value: 22450.25, change: 268.30, change_pct: 1.21 },
+                    banknifty: { value: 48500.80, change: -219.45, change_pct: -0.45 }
+                },
+                fiidii: { fii_net: 1250.5, dii_net: -890.2 }
+            };
+        }
+
+        function getMockAlerts() {
+            return [
+                { id: '1', symbol: 'TATASTEEL', type: 'bulk_deal', signal_strength: 'STRONG', price: 142.50, target: 155, stop_loss: 135, description: '5x average volume with 4.8% price increase', insight: 'Institutional buying detected. Usually precedes 8-12% upside in 30 days.', source: 'demo' },
+                { id: '2', symbol: 'HDFCBANK', type: 'insider_trading', signal_strength: 'STRONG', price: 1442.30, target: 1520, stop_loss: 1380, description: 'Promoter buying at current levels', insight: 'Promoter conviction high. Usually bullish signal for next quarter.', source: 'demo' },
+                { id: '3', symbol: 'RELIANCE', type: 'volume_spike', signal_strength: 'MODERATE', price: 2847.50, target: 2950, stop_loss: 2780, description: '3.8x average volume with moderate rise', insight: 'Accumulation phase likely. Watch for breakout above ₹2900.', source: 'demo' }
+            ];
+        }
+
+        function getMockAnalysis(symbol) {
+            return {
+                symbol,
+                current_price: 2847.50,
+                indicators: { rsi: 58, macd: 'bullish_crossover' },
+                patterns_detected: [{
+                    pattern: 'Bull Flag',
+                    confidence: 73,
+                    direction: 'bullish',
+                    entry_point: 2850,
+                    target: 3020,
+                    stop_loss: 2750,
+                    risk_reward: 2.4,
+                    historical_success_rate: 68
+                }]
+            };
+        }
+    </script>
+</body>
+</html>
