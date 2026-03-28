@@ -139,17 +139,6 @@ See [**IMPACT_MODEL.md**](./IMPACT_MODEL.md) for detailed math and logic.
 
 ---
 
-## Hackathon Checklist
-
-- [x] Multi-agent pipelines (Radar, Analysis, Chat, Video agents)
-- [x] Real-time data integration (Yahoo Finance)
-- [x] LLM-powered conversational AI (Groq Llama-3.3-70B)
-- [x] Technical analysis with chart visualization (TradingView)
-- [x] Video generation pipeline (demo mode)
-- [x] Error recovery (mock fallbacks at every layer)
-
----
-
 **Built for ET AI Hackathon 2026 | Problem Statement #6: AI for the Indian Investor**
 
 *Powered by Economic Times × Groq × Yahoo Finance*
